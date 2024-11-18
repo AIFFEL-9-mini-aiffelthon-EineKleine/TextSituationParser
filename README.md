@@ -2,9 +2,12 @@
 상황 분류 모델입니다
 
 ### 제미나이 사용을 하기위해 설치해주셔야합니다.
+-  Levenshtein는 문장 두개 비교 계산기 입니다
 
 ```bash
 pip install google-generativeai
+
+pip install Levenshtein 
 ```
 
 
