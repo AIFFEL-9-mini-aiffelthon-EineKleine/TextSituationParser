@@ -8,7 +8,7 @@ class TextSituationParser:
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
         self.system_instruction = (
-            'JSON schema로 상황을 나눠줘, 상황을 나눌때는 원래 문장을 그대로 수정없이 놔둬줘, 상황은 1개이상으로 만들어줘:{{"상황1": <첫번째 상황의 원문>, "상황2": <두번째 상황의 원문>}}'
+            'JSON schema로 상황을 나눠줘 너무 세분화 하지는 말고 큰 주제에 대해서 나눠줘, 상황을 나눌때는 원래 문장을 그대로 수정없이 놔둬줘, 상황은 1개이상으로 만들어줘:{{"상황1": <첫번째 상황의 원문>, "상황2": <두번째 상황의 원문>}}'
         )
         self.model = genai.GenerativeModel(
             "gemini-1.5-flash",
