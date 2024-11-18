@@ -10,7 +10,8 @@ pip install google-generativeai
 ### 안쪽에 API 키를 입력하는 란이있습니다.
 ```python
 
-from test import TextSituationParser
+# diaryParset.py 파일 디렉토리를 같은곳에 두세요
+from diaryParser import TextSituationParser
 
 GOOGLE_API_KEY = 'your_API_key'
 input_text = (
