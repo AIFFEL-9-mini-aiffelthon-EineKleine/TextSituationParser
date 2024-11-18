@@ -7,6 +7,8 @@
 pip install google-generativeai
 ```
 
+
+https://ai.google.dev/ <- 제미나이 API 발급 링크
 ### 안쪽에 API 키를 입력하는 란이있습니다.
 ```python
 
