@@ -12,7 +12,8 @@ input으로 str 형태의 텍스트를 넣으면
 1. 선택된 주요문장 : filter_seper_senten
 2. 그 문장의 감정 분류 : result_s_model
 3. 그 문장의 키워드 : result_k_model
-순으로 list형태로 반환됩니다
+   
+순으로 ** list형태로 반환됩니다**
 
 
 
