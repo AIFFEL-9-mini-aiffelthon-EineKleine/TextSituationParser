@@ -1,3 +1,9 @@
+# !pip install pytextrank
+# !python -m spacy download en_core_web_sm
+
+import pytextrank
+import spacy
+
 class DiarySenAnaly:
     def __init__(self, input_text):
         self.input_text = input_text
@@ -36,14 +42,17 @@ class DiarySenAnaly:
 
         return filter_seper_senten2, filter_seper_label
     
-
-    ####################################
-    ### 키워드 추출 모델 넣기#############
-    ####################################
     def keyword_extract_f(self, sentences):
-        """Dummy function for keyword extraction."""
-        return ["keyword1", "keyword2"]  # Replace with your real keyword extraction logic
-    ####################################
+        keyword = []
+        nlp = spacy.load("en_core_web_sm")
+        nlp.add_pipe("textrank")
+
+        for sentence in sentences:
+            doc = nlp(sentence)
+            keyword_sourece = [phrase.text for phrase in doc._.phrases[:1]]
+            print()
+            keyword.append(keyword_sourece)
+        return keyword
 
 
     def __call__(self):

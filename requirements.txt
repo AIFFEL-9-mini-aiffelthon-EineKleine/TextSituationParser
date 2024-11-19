@@ -1,3 +1,4 @@
 google-generativeai
 Levenshtein
 python-dotenv
+pytextrank
