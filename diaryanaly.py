@@ -10,6 +10,38 @@ class DiarySenAnaly:
     
     ####################################
     ### 감정분류 모델 넣기#############
+        # 감정 분석을 위한 Hugging Face 파이프라인 설정
+    def create_emotion_analyzer(self):
+        """Creates and returns a Hugging Face pipeline for emotion analysis using a Korean model."""
+        return pipeline("text-classification", model="beomi/kcbert-base")
+
+    def analyze_diary_entry(self, diary_entry, emotion_analyzer):
+        """
+        Analyzes the emotion of a diary entry using a given emotion analyzer pipeline.
+
+        Parameters:
+        diary_entry (str): The diary text to analyze.
+        emotion_analyzer (Pipeline): The Hugging Face pipeline object for emotion analysis.
+
+        Returns:
+        dict: A dictionary containing the analyzed emotion and the corresponding emoji.
+        """
+        # 감정 -> 이모지 매핑
+        emotion_to_emoji = {
+            "공포": "😱",
+            "놀람": "😲",
+            "분노": "😡",
+            "슬픔": "😢",
+            "중립": "😐",
+            "행복": "😊",
+            "혐오": "🤢"
+        }
+
+        # 감정 분석 수행
+        emotion_result = emotion_analyzer(diary_entry)[0]
+        emotion = emotion_result["label"]
+        emoji = emotion_to_emoji.get(emotion, "🤔")  # 매핑되지 않은 경우 기본 이모지 사용
+        return {"emotion": emotion, "emoji": emoji}
     ################################
     def sementic_classfiy_f(self, sentences):
         """Dummy function for semantic classification."""
