@@ -13,7 +13,7 @@ EMOTIONS_ENDPOINT = f"{API_BASE_URL}/keywords"
 # Interval between loop iterations in seconds
 LOOP_INTERVAL = 60  # e.g., 60 seconds
 
-def fetch_diary_entries() -> List[dict]:
+def db_get_diary_entries() -> List[dict]:
     """
     Fetch all diary entries from the backend.
     """
@@ -25,7 +25,7 @@ def fetch_diary_entries() -> List[dict]:
         print(f"Error fetching diary entries: {e}")
         return []
 
-def fetch_existing_emotions(entry_id: int) -> List[str]:
+def db_get_existing_emotions(entry_id: int) -> List[str]:
     """
     Fetch existing emotions for a specific diary entry.
     """
@@ -39,29 +39,50 @@ def fetch_existing_emotions(entry_id: int) -> List[str]:
         print(f"Error fetching emotions for entry ID {entry_id}: {e}")
         return []
 
-# def extract_emotions(text: str, max_emotions: int = 5) -> List[str]:
-#     """
-#     Extract emotions from the provided text using RAKE.
-#     """
-#     rake = Rake()
-#     rake.extract_keywords_from_text(text)
-#     emotions = rake.get_ranked_phrases()
-#     return emotions[:max_emotions]  # Return top N emotions
+diary_analyzer = DiarySentimentAnalysis()
+def extract_emotions(text: str) -> List[str]:
+    a, pred_labels_filterd, b = diary_analyzer(text)
+    return pred_labels_filterd
+    
+def db_put_emotion(entry_id: int, emotion: str):
+    """
+    Post a new emotion to the specified diary entry.
 
-def post_emotion(entry_id: int, emotion: str):
+    This function retrieves the current list of keywords associated with a diary entry and appends a new emotion if it is not already present. It then updates the entry with the modified list of keywords.
+
+    Args:
+        entry_id (int): The ID of the diary entry to which the emotion will be added.
+        emotion (str): The emotion to be added to the entry's keywords.
+
+    Raises:
+        requests.exceptions.RequestException: If there is an error during the API requests.
     """
-    Post a single emotion to the backend for a specific diary entry.
-    """
-    payload = {
-        "entry_id": entry_id,
-        "emotion": emotion
-    }
+
     try:
-        response = requests.post(EMOTIONS_ENDPOINT, json=payload)
+        # Step 1: Retrieve the current list of keywords for the entry
+        response = requests.get(f"{API_BASE_URL}/diary/{entry_id}")
         response.raise_for_status()
-        print(f"Posted emotion '{emotion}' for entry ID {entry_id}.")
+        entry_data = response.json()
+        current_keywords = entry_data.get('keywords', [])
+        
+        # Step 2: Append the new emotion to the list of keywords
+        if emotion not in current_keywords:
+            updated_keywords = current_keywords + [emotion]
+        else:
+            updated_keywords = current_keywords  # Emotion already exists
+        
+        # Step 3: Update the keywords using the PUT method
+        payload = {
+            "keywords": updated_keywords
+        }
+        put_response = requests.put(
+            f"{API_BASE_URL}/diary/{entry_id}/keywords",
+            json=payload
+        )
+        put_response.raise_for_status()
+        print(f"Added emotion '{emotion}' to entry ID {entry_id}.")
     except requests.exceptions.RequestException as e:
-        print(f"Error posting emotion '{emotion}' for entry ID {entry_id}: {e}")
+        print(f"Error adding emotion '{emotion}' to entry ID {entry_id}: {e}")
 
 def process_entry(entry: dict):
     """
@@ -77,11 +98,10 @@ def process_entry(entry: dict):
     print(f"Content: {content}")
 
     # Fetch existing emotions to avoid duplicates
-    existing_emotions = fetch_existing_emotions(entry_id)
+    existing_emotions = db_get_existing_emotions(entry_id)
     print(f"Existing Emotions: {existing_emotions}")
 
     # Extract new emotions
-    extract_emotions = EmotionExtractor()  # TODO
     extracted_emotions = extract_emotions(content)
     print(f"Extracted Emotions: {extracted_emotions}")
 
@@ -94,7 +114,7 @@ def process_entry(entry: dict):
 
     # Post new emotions
     for emotion in new_emotions:
-        post_emotion(entry_id, emotion)
+        db_put_emotion(entry_id, emotion)
 
 def run_loop(interval: int = LOOP_INTERVAL):
     """
@@ -104,7 +124,7 @@ def run_loop(interval: int = LOOP_INTERVAL):
     try:
         while True:
             print("\n--- New Iteration ---")
-            if entries := fetch_diary_entries():
+            if entries := db_get_diary_entries():
                 for entry in entries:
                     process_entry(entry)
             else:
