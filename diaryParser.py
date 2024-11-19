@@ -2,10 +2,16 @@ import re
 import json
 import google.generativeai as genai
 
+# Load/Use the custom environment variable
+from dotenv import load_dotenv
+from os import environ
+
+load_dotenv()  # load the `.env` file -- 없다면 만들어야 합니다. 그리고 안에 `GEMINI_API_KEY="..."`와 같이 작성해주세요.
+
 class TextSituationParser:
     def __init__(self, api_key):
         # Google Generative AI 설정
-        self.api_key = api_key
+        self.api_key = environ.get('GEMINI_API_KEY')
         genai.configure(api_key=self.api_key)
         self.system_instruction = (
             'JSON schema로 상황을 나눠줘 너무 세분화 하지는 말고 큰 주제에 대해서 나눠줘, 상황을 나눌때는 원래 문장을 그대로 수정없이 놔둬줘, 상황은 1개이상으로 만들어줘:{{"상황1": <첫번째 상황의 원문>, "상황2": <두번째 상황의 원문>}}'

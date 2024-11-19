@@ -5,16 +5,18 @@
 -  Levenshtein는 문장 두개 비교 계산기 입니다
 
 ```bash
-pip install google-generativeai
-
-pip install Levenshtein 
+pip install -r requirements.txt
 ```
+위 명령을 통해 파이썬 패키지를 설치해야 합니다.  
+그리고 `.env` 파일을 만들고 안에 다음과 같이 작성해주세요.
 
+```bash
+GEMINI_API_KEY="<API키>"
+```
 
 https://ai.google.dev/ <- 제미나이 API 발급 링크
 ### 안쪽에 API 키를 입력하는 란이있습니다.
 ```python
-
 # diaryParset.py 파일 디렉토리를 같은곳에 두세요
 from diaryParser import TextSituationParser
 
