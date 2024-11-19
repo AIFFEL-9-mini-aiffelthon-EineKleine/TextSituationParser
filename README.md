@@ -1,3 +1,14 @@
+# 모델 전체 프레임을 짠 코드입니다
+
+```python
+from diaryanaly import DiarySenAnaly
+
+input_text = '안녕하세요~ 오늘은 진짜 좋은일이있었습니다. 그런데 안좋은일도있었어요. 코드를 짜는데 집중이 하나도안되네..'
+diary_analyzer = DiarySenAnaly(input_text)
+filter_seper_senten, result_s_model, result_k_model = diary_analyzer()
+```
+
+# 여기서는 안쓰이는 상황분류 모델 설명
 # TextSituationParser
 상황 분류 모델입니다
 
