@@ -1,8 +1,7 @@
-# !pip install pytextrank
-# !python -m spacy download en_core_web_sm
-
+from transformers import pipeline
 import pytextrank
 import spacy
+
 
 class DiarySenAnaly:
     def __init__(self, input_text):
@@ -14,19 +13,36 @@ class DiarySenAnaly:
         self.seper_senten = [sentence.strip() for sentence in self.seper_senten if sentence.strip()]
         return self.seper_senten
     
-    ####################################
-    ### 감정분류 모델 넣기#############
-    ################################
-    def sementic_classfiy_f(self, sentences):
-        """Dummy function for semantic classification."""
-        return [1, 3, 4]  # Replace with your real classification logic
-    ########################################
+    def create_emotion_analyzer(self):
+        return pipeline("text-classification", model="beomi/kcbert-base")
+
+    def analyze_diary_entry(self,sentences, emotion_analyzer):
+        # 감정 -> 이모지 매핑
+        emotion_to_emoji = {
+            "공포": "😱",
+            "놀람": "😲",
+            "분노": "😡",
+            "슬픔": "😢",
+            "중립": "😐",
+            "행복": "😊",
+            "혐오": "🤢"
+        }
+
+        result = []
+        for sentence in sentences:
+
+            # 감정 분석 수행
+            emotion_result = emotion_analyzer(sentence)[0]
+            emotion = emotion_result["label"]
+            emoji = emotion_to_emoji.get(emotion, "🤔")  # 매핑되지 않은 경우 기본 이모지 사용
+            result.append(emoji)
+        return result
 
 
     ### 감정 분류시 중립 제외 인덱스로 수정 ##
     def filter_sementic(self, result):
         """Filters sentences based on important emotion labels and combines them with previous sentences."""
-        important_labels = {4}  # Labels of interest
+        important_labels = {"😱", "😲", "😡", "😢", "😊", "🤢","🤔"}  # Labels of interest
         filter_seper_senten = [self.seper_senten[i] for i, label in enumerate(result) if label in important_labels]
         filter_seper_label = [result[i] for i, label in enumerate(result) if label in important_labels]
 
@@ -40,7 +56,7 @@ class DiarySenAnaly:
             else:
                 filter_seper_senten2.append(filter_seper_senten[i])
 
-        return filter_seper_senten2, filter_seper_label
+        return filter_seper_senten, filter_seper_label
     
     def keyword_extract_f(self, sentences):
         keyword = []
@@ -54,21 +70,17 @@ class DiarySenAnaly:
             keyword.append(keyword_sourece)
         return keyword
 
-
     def __call__(self):
         """Runs the full analysis when the class is called."""
         # Split sentences
         self.split_sentence()
 
         # Perform semantic classification
-        result_s_model = self.sementic_classfiy_f(self.seper_senten)
+        emotion_analyzer = self.create_emotion_analyzer()
+        result_s_model = self.analyze_diary_entry(self.seper_senten, emotion_analyzer)
 
         # Filter sentences
         filter_seper_senten, filter_seper_label = self.filter_sementic(result_s_model)
-
-        # decoding label 2 sentic 'str'
-        ## 숫자 라벨을 글자로 바꿔주는 코드 작성 
-        # input  = filter_seper_label -> output = ['행복', '슬픔', '혐오']  등등
 
         # Extract keywords
         result_k_model = self.keyword_extract_f(filter_seper_senten)
