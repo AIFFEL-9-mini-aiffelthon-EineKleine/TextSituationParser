@@ -8,6 +8,14 @@ diary_analyzer = DiarySenAnaly(input_text)
 filter_seper_senten, result_s_model, result_k_model = diary_analyzer()
 ```
 
+input으로 str 형태의 텍스트를 넣으면 
+1. 선택된 주요문장 : filter_seper_senten
+2. 그 문장의 감정 분류 : result_s_model
+3. 그 문장의 키워드 : result_k_model
+순으로 list형태로 반환됩니다
+
+
+
 # 여기서는 안쓰이는 상황분류 모델 설명
 # TextSituationParser
 상황 분류 모델입니다
