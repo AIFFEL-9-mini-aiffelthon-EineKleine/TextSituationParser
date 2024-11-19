@@ -1,8 +1,5 @@
 import requests
-from emotion_extractor import EmotionExtractor
-
-# from rake_nltk import Rake
-# import nltk
+from diary_analysis import DiarySentimentAnalysis
 
 import time
 import sys

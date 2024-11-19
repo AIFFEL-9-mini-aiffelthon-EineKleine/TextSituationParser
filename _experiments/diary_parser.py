@@ -33,7 +33,7 @@ class TextSituationParser:
         str1 = self.preprocess(str1)
         str2 = self.preprocess(str2)
         min_length = min(len(str1), len(str2))
-        mismatch_count = sum(1 for i in range(min_length) if str1[i] != str2[i])
+        mismatch_count = sum(str1[i] != str2[i] for i in range(min_length))
         mismatch_count += abs(len(str1) - len(str2))
         total_length = max(len(str1), len(str2))
         mismatch_ratio = 1 - mismatch_count / total_length
