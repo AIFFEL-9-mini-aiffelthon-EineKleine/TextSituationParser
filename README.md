@@ -1,4 +1,13 @@
-# 모델 전체 프레임을 짠 코드입니다
+# 환경설정 해주세요
+```bash
+pip install -r requirements.txt
+```
+
+### 요약 모델을 따로 다운로드 받습니다
+```bash
+python -m spacy download en_core_web_sm
+```
+# 코드예시입니다
 
 ```python
 from diaryanaly import DiarySenAnaly
@@ -15,6 +24,15 @@ input으로 str 형태의 텍스트를 넣으면
    
 순으로 ** list형태로 반환됩니다**
 
+
+<img width="770" alt="image" src="https://github.com/user-attachments/assets/1cb30023-5e7a-447a-9124-492df3e8fd52">
+
+결과는 순서대로 
+1. 입력데이터 분할 결과
+2. 각 문장 감정 분류 결과
+3. 중립을 제외한 문장 결과
+4. 중립을 제외한 문장의 감정 라벨 결과(모두 '흠' 이모지로 같기때문에 위에랑 같습니다. 중립이라고 생각하시면되요!)
+5. 각문장에대한 keyword 추출 결과 - 결과가 그렇게 좋지는 않군요!
 
 
 # 여기서는 안쓰이는 상황분류 모델 설명
